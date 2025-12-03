@@ -1,16 +1,107 @@
 [
   {
-    "title": "Paper Minecraft",
+    "title": "Appel",
     "type": "scratch",
-    "id": "10128407",
-    "description": "The legendary 2D Minecraft port on Scratch.",
-    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/10128407_480x360.png"
+    "id": "60917032",
+    "description": "A classic platformer by Griffpatch.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/60917032_480x360.png"
   },
   {
     "title": "Geometry Dash",
     "type": "scratch",
     "id": "105500895",
-    "description": "Rhythm-based platformer made by Griffpatch.",
+    "description": "Rhythm-based jumper by Griffpatch.",
     "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/105500895_480x360.png"
+  },
+  {
+    "title": "Arena v3.02",
+    "type": "scratch",
+    "id": "3176662",
+    "description": "Action shooter by theChAOTiC.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/3176662_480x360.png"
+  },
+  {
+    "title": "Rocket Cowboy",
+    "type": "scratch",
+    "id": "1571216",
+    "description": "Platformer by alps88.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/1571216_480x360.png"
+  },
+  {
+    "title": "Phantom",
+    "type": "scratch",
+    "id": "432924521",
+    "description": "By –Patrixx–.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/432924521_480x360.png"
+  },
+  {
+    "title": "Paper Minecraft",
+    "type": "scratch",
+    "id": "10128407",
+    "description": "The legendary port by Griffpatch.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/10128407_480x360.png"
+  },
+  {
+    "title": "Getting Over It",
+    "type": "scratch",
+    "id": "389464290",
+    "description": "Frustration simulator by Griffpatch.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/389464290_480x360.png"
+  },
+  {
+    "title": "Mech v4.48",
+    "type": "scratch",
+    "id": "1343054",
+    "description": "Mech combat by lilgreenland.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/1343054_480x360.png"
+  },
+  {
+    "title": "Ball Blast",
+    "type": "scratch",
+    "id": "234479986",
+    "description": "Arcade shooter by AnimationsScratch.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/234479986_480x360.png"
+  },
+  {
+    "title": "Fortnite Z",
+    "type": "scratch",
+    "id": "259508906",
+    "description": "Zombie shooter by FunnyAnimatorJimTV.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/259508906_480x360.png"
+  },
+  {
+    "title": "Flip 3D",
+    "type": "scratch",
+    "id": "319984334",
+    "description": "Skill game by MasterAndras.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/319984334_480x360.png"
+  },
+  {
+    "title": "Ninja 5",
+    "type": "scratch",
+    "id": "298436488",
+    "description": "Platformer by Will_Wam.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/298436488_480x360.png"
+  },
+  {
+    "title": "Spacevale",
+    "type": "scratch",
+    "id": "336536543",
+    "description": "Space shooter by Coder_d6.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/336536543_480x360.png"
+  },
+  {
+    "title": "Animal Stacking",
+    "type": "scratch",
+    "id": "379867258",
+    "description": "Puzzle game by DJ_Girl2801.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/379867258_480x360.png"
+  },
+  {
+    "title": "Slash Knight",
+    "type": "scratch",
+    "id": "327244246",
+    "description": "RPG Adventure by xamuil2.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/327244246_480x360.png"
   }
 ]
