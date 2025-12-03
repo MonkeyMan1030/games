@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arcade Archive</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ruffle (Flash Emulator) -->
+    <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+    <!-- Retro Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+
+    <style>
+        body { background-color: #121212; overflow: hidden; }
+        
+        /* Typography */
+        .font-pixel { font-family: 'Press Start 2P', cursive; }
+        .font-retro { font-family: 'VT323', monospace; }
+
+        /* Game Grid Styling */
+        .game-card {
+            transition: all 0.2s;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px #e94560;
+            border-color: #e94560;
+        }
+
+        /* Boss Mode Styles (Fake Word Doc) */
+        #boss-interface {
+            font-family: Calibri, Arial, sans-serif;
+            background: #f3f2f1;
+            color: black;
+            display: none; /* Hidden by default */
+        }
+        .boss-active #boss-interface { display: flex; }
+        .boss-active #game-interface { display: none; }
+        
+        /* Paper Shadow */
+        .paper-shadow {
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body class="h-screen w-screen">
+
+    <!-- =========================== -->
+    <!-- 1. GAME INTERFACE           -->
+    <!-- =========================== -->
+    <div id="game-interface" class="h-full w-full flex flex-col bg-gray-900 text-white overflow-y-auto">
+        
+        <!-- Header -->
+        <nav class="bg-gray-800 p-4 border-b-4 border-indigo-600 sticky top-0 z-20 flex justify-between items-center shadow-lg">
+            <h1 class="font-pixel text-yellow-400 text-xs md:text-sm lg:text-base">
+                <span class="text-indigo-400">GITHUB</span> ARCADE
+            </h1>
+            <div class="font-retro text-xl text-gray-400">
+                PRESS <span class="text-white border border-gray-500 px-2 rounded">ESC</span> FOR WORK MODE
+            </div>
+        </nav>
+
+        <!-- Dynamic Game Grid -->
+        <main class="flex-1 p-8 max-w-7xl mx-auto w-full">
+            <div id="game-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Javascript will inject games here -->
+                <div class="col-span-full text-center py-20 text-gray-500 font-pixel text-xs animate-pulse">
+                    LOADING CARTRIDGES...
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- =========================== -->
+    <!-- 2. PLAYING MODAL (Overlay)  -->
+    <!-- =========================== -->
+    <div id="play-modal" class="fixed inset-0 bg-black/95 z-50 hidden flex flex-col items-center justify-center">
+        <div class="w-full max-w-5xl flex justify-end px-4 mb-2">
+            <button onclick="closeGame()" class="text-white font-pixel text-xs border border-red-500 hover:bg-red-600 px-4 py-2 rounded transition">
+                CLOSE GAME [X]
+            </button>
+        </div>
+        
+        <!-- Game Container -->
+        <div id="player-container" class="w-full max-w-5xl h-[80vh] bg-black border-2 border-gray-700 shadow-2xl flex items-center justify-center">
+            <!-- Game loads here -->
+        </div>
+    </div>
+
+    <!-- =========================== -->
+    <!-- 3. BOSS MODE (Word Lookalike) -->
+    <!-- =========================== -->
+    <div id="boss-interface" class="h-full w-full flex-col absolute top-0 left-0 z-[100]">
+        <!-- Blue Top Bar -->
+        <div class="bg-[#2b579a] text-white px-4 py-2 text-sm flex justify-between items-center">
+            <div class="flex gap-4 items-center">
+                <span>💾</span>
+                <span>Q3_Financial_Projections_Draft_v4.docx</span>
+            </div>
+            <div class="flex gap-4">
+                <span>John Doe</span>
+                <span>─ □ ✕</span>
+            </div>
+        </div>
+        <!-- Ribbon -->
+        <div class="bg-white border-b border-gray-300 h-24 flex items-center px-4 gap-4 text-xs text-center text-gray-600">
+            <div class="flex flex-col gap-1"><span class="text-2xl">📋</span>Paste</div>
+            <div class="h-full w-px bg-gray-300 mx-2"></div>
+            <div class="flex flex-col items-start gap-1">
+                <div class="flex gap-1 border p-0.5"><span class="w-32 text-left">Calibri</span></div>
+                <div class="flex gap-1 font-bold"><span class="bg-gray-200 px-2">B</span><span class="px-2">I</span><span class="px-2">U</span></div>
+            </div>
+        </div>
+        <!-- Document Canvas -->
+        <div class="flex-1 bg-[#e3e3e3] overflow-y-auto p-8 flex justify-center">
+            <div class="bg-white w-[816px] min-h-[1100px] p-[96px] paper-shadow text-black">
+                <h1 class="text-3xl text-[#2f5496] mb-4">Quarterly Efficiency Analysis</h1>
+                <p class="mb-4"><strong>Date:</strong> October 24, 2024</p>
+                <p class="mb-4"><strong>To:</strong> Senior Management</p>
+                <p class="mb-8"><strong>Subject:</strong> Optimization of Workflow Processes</p>
+                
+                <p class="mb-4 text-justify leading-7">
+                    The current fiscal quarter has demonstrated a significant variance in projected versus actual output. 
+                    Preliminary data suggests that the integration of the new logistical framework has yielded a net positive 
+                    ROI of 4.2%, although friction points remain in the supply chain vertical.
+                </p>
+                <p class="mb-4 text-justify leading-7">
+                    It is imperative that we continue to monitor the KPIs established in the Q2 summit. 
+                    <span class="text-blue-600 underline">See Appendix A</span> for the full breakdown of data sets. 
+                    The operational expenditure (OPEX) has remained within the standard deviation of the allocated budget.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. LOAD GAMES FROM JSON ---
+        async function loadGames() {
+            try {
+                // Fetch the list of games from games.json
+                const response = await fetch('games.json');
+                const games = await response.json();
+                
+                const container = document.getElementById('game-container');
+                container.innerHTML = ''; // Clear loading text
+
+                games.forEach(game => {
+                    // Create Card HTML
+                    const card = document.createElement('div');
+                    card.className = "game-card bg-gray-800 border-2 border-gray-700 rounded-lg overflow-hidden cursor-pointer flex flex-col";
+                    
+                    // Determine Thumbnail (Use a placeholder if none provided)
+                    const thumb = game.thumbnail || `https://placehold.co/400x300/2a2a2a/FFF?text=${game.title.charAt(0)}`;
+
+                    card.innerHTML = `
+                        <div class="h-40 bg-gray-900 overflow-hidden relative">
+                            <img src="${thumb}" alt="${game.title}" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition">
+                            <span class="absolute top-2 right-2 px-2 py-1 text-[10px] font-pixel text-black ${game.type === 'flash' ? 'bg-orange-400' : 'bg-blue-400'}">
+                                ${game.type.toUpperCase()}
+                            </span>
+                        </div>
+                        <div class="p-4 flex-1 flex flex-col justify-between">
+                            <h3 class="text-white font-bold font-retro text-xl tracking-wide mb-1">${game.title}</h3>
+                            <p class="text-gray-400 text-xs truncate">${game.description || 'Classic Game'}</p>
+                        </div>
+                    `;
+
+                    // Add Click Event
+                    card.onclick = () => launchGame(game);
+                    container.appendChild(card);
+                });
+
+            } catch (error) {
+                console.error("Error loading games:", error);
+                document.getElementById('game-container').innerHTML = `
+                    <div class="col-span-full text-center text-red-500 font-pixel">
+                        ERROR LOADING GAMES.JSON<br>Check console.
+                    </div>`;
+            }
+        }
+
+        // --- 2. GAME LAUNCHER ---
+        function launchGame(game) {
+            const modal = document.getElementById('play-modal');
+            const container = document.getElementById('player-container');
+            container.innerHTML = ''; // Clear previous game
+
+            modal.classList.remove('hidden');
+
+            if (game.type === 'scratch') {
+                // EMBED SCRATCH (Iframe)
+                container.innerHTML = `
+                    <iframe src="https://scratch.mit.edu/projects/${game.id}/embed" 
+                    allowtransparency="true" width="100%" height="100%" 
+                    frameborder="0" scrolling="no" allowfullscreen></iframe>
+                `;
+            } else if (game.type === 'flash') {
+                // EMBED FLASH (Ruffle)
+                const player = document.createElement("ruffle-player");
+                player.style.width = "100%";
+                player.style.height = "100%";
+                container.appendChild(player);
+                
+                // Load the SWF file from the swf folder
+                player.load({
+                    url: "swf/" + game.file, 
+                    backgroundColor: "#000000"
+                });
+            }
+        }
+
+        function closeGame() {
+            const modal = document.getElementById('play-modal');
+            const container = document.getElementById('player-container');
+            modal.classList.add('hidden');
+            container.innerHTML = ''; // Destroy game instance to stop audio
+        }
+
+        // --- 3. BOSS MODE TOGGLE ---
+        document.addEventListener('keydown', (e) => {
+            if (e.key === "Escape") {
+                document.body.classList.toggle('boss-active');
+                
+                // Update title for realism
+                if (document.body.classList.contains('boss-active')) {
+                    document.title = "Q3_Financial_Projections.docx - Word";
+                } else {
+                    document.title = "Arcade Archive";
+                }
+            }
+        });
+
+        // Initialize
+        loadGames();
+
+    </script>
+</body>
+</html>
