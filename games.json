@@ -1,0 +1,30 @@
+[
+  {
+    "title": "Paper Minecraft",
+    "type": "scratch",
+    "id": "10128407",
+    "description": "The legendary 2D Minecraft port on Scratch.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/10128407_480x360.png"
+  },
+  {
+    "title": "Geometry Dash",
+    "type": "scratch",
+    "id": "105500895",
+    "description": "Rhythm-based platformer made by Griffpatch.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/105500895_480x360.png"
+  },
+  {
+    "title": "Fancy Pants Adv.",
+    "type": "flash",
+    "file": "fancy_pants.swf",
+    "description": "Run fast, wear fancy pants. A classic platformer.",
+    "thumbnail": "https://upload.wikimedia.org/wikipedia/en/8/87/Fancy_Pants_Adventures_World_1.png"
+  },
+  {
+    "title": "Alien Hominid",
+    "type": "flash",
+    "file": "alien.swf",
+    "description": "Blast everything in sight.",
+    "thumbnail": ""
+  }
+]
