@@ -97,7 +97,7 @@
         <main class="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
             <!-- Stats Bar -->
             <div class="flex justify-between items-end mb-6 border-b border-gray-700 pb-2">
-                <span id="gameCount" class="font-retro text-xl text-gray-400">Loading library...</span>
+                <span id="gameCount" class="font-retro text-xl text-gray-400">Connecting to Database...</span>
                 <span class="text-xs text-gray-500 font-mono">v2.1.0</span>
             </div>
 
@@ -174,104 +174,123 @@
         </div>
     </div>
 
-    <script>
+    <!-- =========================== -->
+    <!-- 4. FIREBASE LOGIC           -->
+    <!-- =========================== -->
+    <script type="module">
+        // 1. Import Firebase from CDN (Web-ready URLs)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, increment } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+        // 2. YOUR CONFIGURATION
+        const firebaseConfig = {
+            apiKey: "AIzaSyCeubvLZk3GDrVPJ-azhrFbgtGl_O6WC4g",
+            authDomain: "arcadearchive-d8ae7.firebaseapp.com",
+            projectId: "arcadearchive-d8ae7",
+            storageBucket: "arcadearchive-d8ae7.firebasestorage.app",
+            messagingSenderId: "85038885574",
+            appId: "1:85038885574:web:6bcea6438a9da7c12fc5c7"
+        };
+
+        // 3. Initialize
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         // --- GLOBAL STATE ---
         let allGames = [];
         let filteredGames = [];
-        
-        // --- BACKUP DATA (Used if games.json fails) ---
+
+        // Backup data (for when games.json isn't found in preview)
         const backupGames = [
             { "title": "Appel", "type": "scratch", "id": "60917032", "description": "Classic platformer by Griffpatch." },
             { "title": "Fancy Pants Adv.", "type": "flash", "file": "fancy_pants.swf", "description": "Run fast, wear fancy pants." }
         ];
 
-        // --- 1. INITIALIZATION ---
-        async function loadGames() {
+        // --- LOAD GAMES & SYNC RATINGS ---
+        window.loadGames = async function() {
             try {
-                const response = await fetch('games.json');
-                if (!response.ok) throw new Error("File not found");
-                allGames = await response.json();
+                // A. Fetch the JSON list
+                let gameList = [];
+                try {
+                    const response = await fetch('games.json');
+                    if (!response.ok) throw new Error("File not found");
+                    gameList = await response.json();
+                } catch (error) {
+                    console.warn("Using backup data");
+                    gameList = backupGames;
+                }
+
+                const userLikes = JSON.parse(localStorage.getItem('arcadeLikes')) || {};
+
+                // B. Fetch LIVE ratings from Firestore
+                // We map over games and check the DB for each one
+                const mergedGames = await Promise.all(gameList.map(async (game) => {
+                    // Create safe ID (Firebase doesn't like . or / in ID names)
+                    const uniqueId = (game.id || game.file).toString().replace(/[.#$\[\]]/g, "_");
+                    
+                    game.uniqueId = uniqueId;
+                    game.isLiked = userLikes[uniqueId] ? true : false;
+                    
+                    // Fetch real count
+                    try {
+                        const docRef = doc(db, "game_ratings", uniqueId);
+                        const docSnap = await getDoc(docRef);
+
+                        if (docSnap.exists()) {
+                            game.likes = docSnap.data().count;
+                        } else {
+                            // If it's a new game, give it a random starting number or 0
+                            game.likes = 0; 
+                        }
+                    } catch (e) {
+                        console.error("DB Error on game:", uniqueId, e);
+                        game.likes = 0;
+                    }
+                    
+                    return game;
+                }));
+
+                allGames = mergedGames;
+                applyFilters();
+
+                // Listeners
+                document.getElementById('searchInput').addEventListener('input', applyFilters);
+                document.getElementById('sortSelect').addEventListener('change', applyFilters);
+
             } catch (error) {
-                console.warn("Using backup data (Preview Mode)");
-                allGames = backupGames;
+                console.error("Critical Load Error:", error);
             }
-
-            // ENRICH DATA: Add simulated popularity & Unique IDs
-            const userLikes = JSON.parse(localStorage.getItem('arcadeLikes')) || {};
-
-            allGames = allGames.map((game, index) => {
-                // Create a unique key for the game (ID or Filename)
-                const uniqueId = game.id || game.file;
-                
-                // Simulate a "Base Popularity" (Random number between 500 and 5000)
-                // We use the ID to seed it so it stays consistent-ish, or just random for now
-                const baseLikes = Math.floor(Math.random() * 4500) + 500;
-                
-                // Check if user liked it locally
-                const isLiked = userLikes[uniqueId] ? true : false;
-
-                return {
-                    ...game,
-                    uniqueId: uniqueId,
-                    likes: baseLikes + (isLiked ? 1 : 0),
-                    isLiked: isLiked
-                };
-            });
-
-            // Initial Filter & Render
-            applyFilters();
-            
-            // Setup Event Listeners
-            document.getElementById('searchInput').addEventListener('input', applyFilters);
-            document.getElementById('sortSelect').addEventListener('change', applyFilters);
         }
 
-        // --- 2. CORE LOGIC: FILTER & SORT ---
-        function applyFilters() {
+        // --- FILTER & SORT ---
+        window.applyFilters = function() {
             const query = document.getElementById('searchInput').value.toLowerCase();
             const sortType = document.getElementById('sortSelect').value;
 
-            // 1. Filter by Search
             filteredGames = allGames.filter(game => {
                 return game.title.toLowerCase().includes(query) || 
                        (game.description && game.description.toLowerCase().includes(query));
             });
 
-            // 2. Sort
-            if (sortType === 'az') {
-                filteredGames.sort((a, b) => a.title.localeCompare(b.title));
-            } else if (sortType === 'za') {
-                filteredGames.sort((a, b) => b.title.localeCompare(a.title));
-            } else if (sortType === 'popularity') {
-                // Sort by likes (descending), then user favorites push to top
-                filteredGames.sort((a, b) => {
-                    if (a.isLiked && !b.isLiked) return -1;
-                    if (!a.isLiked && b.isLiked) return 1;
-                    return b.likes - a.likes;
-                });
-            } else if (sortType === 'scratch') {
-                filteredGames = filteredGames.filter(g => g.type === 'scratch');
-            } else if (sortType === 'flash') {
-                filteredGames = filteredGames.filter(g => g.type === 'flash');
-            }
+            if (sortType === 'az') filteredGames.sort((a, b) => a.title.localeCompare(b.title));
+            else if (sortType === 'za') filteredGames.sort((a, b) => b.title.localeCompare(a.title));
+            else if (sortType === 'popularity') filteredGames.sort((a, b) => b.likes - a.likes);
+            else if (sortType === 'scratch') filteredGames = filteredGames.filter(g => g.type === 'scratch');
+            else if (sortType === 'flash') filteredGames = filteredGames.filter(g => g.type === 'flash');
 
-            // 3. Render
             renderGames();
         }
 
-        function renderGames() {
+        window.renderGames = function() {
             const container = document.getElementById('game-container');
             const noResults = document.getElementById('no-results');
-            const countSpan = document.getElementById('gameCount');
+            const countDisplay = document.getElementById('gameCount');
             
             container.innerHTML = '';
-            countSpan.innerText = `${filteredGames.length} GAMES LOADED`;
-
-            if (filteredGames.length === 0) {
-                noResults.classList.remove('hidden');
-            } else {
-                noResults.classList.add('hidden');
-            }
+            countDisplay.innerText = `${filteredGames.length} GAMES LOADED`;
+            
+            if (filteredGames.length === 0) noResults.classList.remove('hidden');
+            else noResults.classList.add('hidden');
 
             filteredGames.forEach(game => {
                 const card = document.createElement('div');
@@ -282,13 +301,10 @@
                 card.innerHTML = `
                     <div class="h-40 bg-gray-900 overflow-hidden relative cursor-pointer" onclick="launchGame('${game.uniqueId}')">
                         <img src="${thumb}" alt="${game.title}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition">
-                        
                         <span class="absolute top-2 right-2 px-2 py-1 text-[10px] font-pixel text-black font-bold z-10 
                             ${game.type === 'flash' ? 'bg-orange-400' : 'bg-blue-400'}">
                             ${game.type.toUpperCase()}
                         </span>
-                        
-                        <!-- Play Overlay -->
                         <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
                             <i class="fas fa-play text-white text-3xl drop-shadow-lg"></i>
                         </div>
@@ -301,7 +317,7 @@
                         </div>
                         
                         <div class="flex justify-between items-center border-t border-gray-700 pt-2">
-                            <span class="text-xs text-gray-500 font-mono">ID: ${game.uniqueId.toString().substring(0,6)}</span>
+                            <span class="text-xs text-gray-500 font-mono">ID: ${game.uniqueId.substring(0,6)}</span>
                             
                             <button onclick="toggleLike('${game.uniqueId}')" class="heart-btn flex items-center gap-1 text-gray-400 hover:text-white transition ${game.isLiked ? 'liked' : ''}">
                                 <i class="${game.isLiked ? 'fas' : 'far'} fa-heart"></i>
@@ -314,40 +330,48 @@
             });
         }
 
-        // --- 3. INTERACTION: LIKES & RATING ---
-        function toggleLike(id) {
-            const gameIndex = allGames.findIndex(g => g.uniqueId == id);
-            if (gameIndex === -1) return;
+        // --- DATABASE UPDATES ---
+        window.toggleLike = async function(uniqueId) {
+            const game = allGames.find(g => g.uniqueId == uniqueId);
+            if (!game) return;
 
-            const game = allGames[gameIndex];
+            // 1. Optimistic Update (Instant feedback)
             game.isLiked = !game.isLiked;
             game.likes += game.isLiked ? 1 : -1;
+            applyFilters(); // Re-render
 
-            // Save to LocalStorage
+            // 2. Local Storage
             const userLikes = JSON.parse(localStorage.getItem('arcadeLikes')) || {};
-            if (game.isLiked) {
-                userLikes[id] = true;
-            } else {
-                delete userLikes[id];
-            }
+            if (game.isLiked) userLikes[uniqueId] = true;
+            else delete userLikes[uniqueId];
             localStorage.setItem('arcadeLikes', JSON.stringify(userLikes));
 
-            // Re-render to show updated state
-            applyFilters(); 
+            // 3. Firebase Update
+            try {
+                const docRef = doc(db, "game_ratings", uniqueId);
+                // Use 'increment' for atomic updates (prevents race conditions)
+                await setDoc(docRef, { 
+                    count: increment(game.isLiked ? 1 : -1) 
+                }, { merge: true });
+            } catch (e) {
+                console.error("Firebase Update Failed:", e);
+                // In a real app, you might rollback the UI here
+            }
         }
 
         function formatNumber(num) {
+            if(!num) return 0;
             return num >= 1000 ? (num/1000).toFixed(1) + 'k' : num;
         }
 
-        function resetSearch() {
+        // --- UTILS & GAME LAUNCHER ---
+        window.resetSearch = function() {
             document.getElementById('searchInput').value = '';
             document.getElementById('sortSelect').value = 'popularity';
             applyFilters();
         }
 
-        // --- 4. GAME PLAYING LOGIC ---
-        function launchGame(uniqueId) {
+        window.launchGame = function(uniqueId) {
             const game = allGames.find(g => g.uniqueId == uniqueId);
             if (!game) return;
 
@@ -373,12 +397,12 @@
             }
         }
 
-        function closeGame() {
+        window.closeGame = function() {
             document.getElementById('play-modal').classList.add('hidden');
             document.getElementById('player-container').innerHTML = '';
         }
 
-        // --- 5. BOSS MODE & UTILS ---
+        // Boss Mode Key Listener
         document.addEventListener('keydown', (e) => {
             if (e.key === "Escape") {
                 const modal = document.getElementById('play-modal');
@@ -393,7 +417,7 @@
             }
         });
 
-        // Start
+        // Initialize
         loadGames();
 
     </script>
