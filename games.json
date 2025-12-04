@@ -14,6 +14,41 @@
     "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/105500895_480x360.png"
   },
   {
+    "title": "Paper Minecraft",
+    "type": "scratch",
+    "id": "10128407",
+    "description": "The legendary port by Griffpatch.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/10128407_480x360.png"
+  },
+  {
+    "title": "Slither.io",
+    "type": "scratch",
+    "id": "115682859",
+    "description": "Massive multiplayer snake game by Griffpatch.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/115682859_480x360.png"
+  },
+  {
+    "title": "Getting Over It",
+    "type": "scratch",
+    "id": "389464290",
+    "description": "Frustration simulator by Griffpatch.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/389464290_480x360.png"
+  },
+  {
+    "title": "Terraria",
+    "type": "scratch",
+    "id": "322341152",
+    "description": "2D Sandbox adventure by Griffpatch.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/322341152_480x360.png"
+  },
+  {
+    "title": "Ninja",
+    "type": "scratch",
+    "id": "54486799",
+    "description": "Swift ninja action by Will_Wam.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/54486799_480x360.png"
+  },
+  {
     "title": "Arena v3.02",
     "type": "scratch",
     "id": "3176662",
@@ -33,20 +68,6 @@
     "id": "432924521",
     "description": "By –Patrixx–.",
     "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/432924521_480x360.png"
-  },
-  {
-    "title": "Paper Minecraft",
-    "type": "scratch",
-    "id": "10128407",
-    "description": "The legendary port by Griffpatch.",
-    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/10128407_480x360.png"
-  },
-  {
-    "title": "Getting Over It",
-    "type": "scratch",
-    "id": "389464290",
-    "description": "Frustration simulator by Griffpatch.",
-    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/389464290_480x360.png"
   },
   {
     "title": "Mech v4.48",
@@ -105,10 +126,213 @@
     "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/327244246_480x360.png"
   },
   {
-    "title": "Ninja 3",
+    "title": "Epic Ninja",
     "type": "scratch",
-    "id": "1186188776",
-    "description": "game by -Katana_Gaming-.",
-    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/1186188776_480x360.png"
+    "id": "215822365",
+    "description": "Boss battles by Hobson-TV.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/215822365_480x360.png"
+  },
+  {
+    "title": "Geometry Dash SubZero",
+    "type": "scratch",
+    "id": "194602572",
+    "description": "Harder levels by Griffpatch.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/194602572_480x360.png"
+  },
+  {
+    "title": "3D Raycaster",
+    "type": "scratch",
+    "id": "27891786",
+    "description": "Wolfenstein style engine by Griffpatch.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/27891786_480x360.png"
+  },
+  {
+    "title": "Laser Tag",
+    "type": "scratch",
+    "id": "24985297",
+    "description": "Multiplayer shooter by Griffpatch.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/24985297_480x360.png"
+  },
+  {
+    "title": "Mystic Valley",
+    "type": "scratch",
+    "id": "283030800",
+    "description": "Platformer by 0014054.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/283030800_480x360.png"
+  },
+  {
+    "title": "Super Mario Bros",
+    "type": "scratch",
+    "id": "208743973",
+    "description": "A very accurate remake.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/208743973_480x360.png"
+  },
+  {
+    "title": "Portal 2D",
+    "type": "scratch",
+    "id": "10029312",
+    "description": "Portal puzzle mechanics.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/10029312_480x360.png"
+  },
+  {
+    "title": "Minecraft Platformer",
+    "type": "scratch",
+    "id": "108399563",
+    "description": "Steve jumps around.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/108399563_480x360.png"
+  },
+  {
+    "title": "Flappy Bird",
+    "type": "scratch",
+    "id": "17234673",
+    "description": "The classic frustration.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/17234673_480x360.png"
+  },
+  {
+    "title": "Tower Defense",
+    "type": "scratch",
+    "id": "3144883",
+    "description": "Defend the base.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/3144883_480x360.png"
+  },
+  {
+    "title": "Slope",
+    "type": "scratch",
+    "id": "285066226",
+    "description": "Roll down the 3D city.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/285066226_480x360.png"
+  },
+  {
+    "title": "Drift Boss",
+    "type": "scratch",
+    "id": "426868007",
+    "description": "Car drifting simulator.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/426868007_480x360.png"
+  },
+  {
+    "title": "Crossy Road",
+    "type": "scratch",
+    "id": "47226066",
+    "description": "Why did the chicken cross?",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/47226066_480x360.png"
+  },
+  {
+    "title": "Pac-Man",
+    "type": "scratch",
+    "id": "15671569",
+    "description": "Waka Waka.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/15671569_480x360.png"
+  },
+  {
+    "title": "Tetris",
+    "type": "scratch",
+    "id": "27101860",
+    "description": "Block stacking classic.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/27101860_480x360.png"
+  },
+  {
+    "title": "World's Hardest Game",
+    "type": "scratch",
+    "id": "15372132",
+    "description": "It really is hard.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/15372132_480x360.png"
+  },
+  {
+    "title": "Google Snake",
+    "type": "scratch",
+    "id": "304652239",
+    "description": "The search engine easter egg.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/304652239_480x360.png"
+  },
+  {
+    "title": "Subway Surfers",
+    "type": "scratch",
+    "id": "402320073",
+    "description": "Endless runner remake.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/402320073_480x360.png"
+  },
+  {
+    "title": "Doom",
+    "type": "scratch",
+    "id": "35873435",
+    "description": "Yes, it runs Doom.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/35873435_480x360.png"
+  },
+  {
+    "title": "Among Us",
+    "type": "scratch",
+    "id": "422543526",
+    "description": "Sus.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/422543526_480x360.png"
+  },
+  {
+    "title": "Clicker Heroes",
+    "type": "scratch",
+    "id": "100346337",
+    "description": "Addictive clicking.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/100346337_480x360.png"
+  },
+  {
+    "title": "Pizza Clicker",
+    "type": "scratch",
+    "id": "26083166",
+    "description": "Make pizza, get rich.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/26083166_480x360.png"
+  },
+  {
+    "title": "Temple Run 2",
+    "type": "scratch",
+    "id": "19436323",
+    "description": "Run from the monkey.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/19436323_480x360.png"
+  },
+  {
+    "title": "Plants vs Zombies",
+    "type": "scratch",
+    "id": "16198906",
+    "description": "Protect the lawn.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/16198906_480x360.png"
+  },
+  {
+    "title": "Super Smash Bros",
+    "type": "scratch",
+    "id": "20593630",
+    "description": "Fighting game remake.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/20593630_480x360.png"
+  },
+  {
+    "title": "Cut The Rope",
+    "type": "scratch",
+    "id": "18059083",
+    "description": "Feed Om Nom.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/18059083_480x360.png"
+  },
+  {
+    "title": "Jetpack Joyride",
+    "type": "scratch",
+    "id": "17822976",
+    "description": "Fly with machine guns.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/17822976_480x360.png"
+  },
+  {
+    "title": "Fruit Ninja",
+    "type": "scratch",
+    "id": "16200279",
+    "description": "Slice fruit, avoid bombs.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/16200279_480x360.png"
+  },
+  {
+    "title": "Hill Climb Racing",
+    "type": "scratch",
+    "id": "24987679",
+    "description": "Physics driving.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/24987679_480x360.png"
+  },
+  {
+    "title": "Stick War",
+    "type": "scratch",
+    "id": "13695277",
+    "description": "Strategy battle.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/13695277_480x360.png"
   }
 ]
