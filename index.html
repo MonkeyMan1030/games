@@ -9,6 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Ruffle (Flash Emulator) -->
     <script src="https://unpkg.com/@ruffle-rs/ruffle"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Retro Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
 
@@ -19,30 +21,34 @@
         .font-pixel { font-family: 'Press Start 2P', cursive; }
         .font-retro { font-family: 'VT323', monospace; }
 
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 4px; }
+
         /* Game Grid Styling */
-        .game-card {
-            transition: all 0.2s;
-        }
+        .game-card { transition: all 0.2s; }
         .game-card:hover {
             transform: translateY(-5px);
             box-shadow: 0 0 15px #e94560;
             border-color: #e94560;
         }
 
+        /* Heart Animation */
+        .heart-btn:active { transform: scale(0.8); }
+        .liked { color: #e94560 !important; }
+
         /* Boss Mode Styles (Fake Word Doc) */
         #boss-interface {
             font-family: Calibri, Arial, sans-serif;
             background: #f3f2f1;
             color: black;
-            display: none; /* Hidden by default */
+            display: none;
         }
         .boss-active #boss-interface { display: flex; }
         .boss-active #game-interface { display: none; }
         
-        /* Paper Shadow */
-        .paper-shadow {
-            box-shadow: 0 0 10px rgba(0,0,0,0.2);
-        }
+        .paper-shadow { box-shadow: 0 0 10px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body class="h-screen w-screen">
@@ -53,22 +59,58 @@
     <div id="game-interface" class="h-full w-full flex flex-col bg-gray-900 text-white overflow-y-auto">
         
         <!-- Header -->
-        <nav class="bg-gray-800 p-4 border-b-4 border-indigo-600 sticky top-0 z-20 flex justify-between items-center shadow-lg">
-            <h1 class="font-pixel text-yellow-400 text-xs md:text-sm lg:text-base">
-                <span class="text-indigo-400">GITHUB</span> ARCADE
-            </h1>
-            <div class="font-retro text-xl text-gray-400">
-                PRESS <span class="text-white border border-gray-500 px-2 rounded">ESC</span> FOR WORK MODE
+        <nav class="bg-gray-800 p-4 border-b-4 border-indigo-600 sticky top-0 z-30 shadow-lg">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+                <h1 class="font-pixel text-yellow-400 text-sm md:text-lg">
+                    <span class="text-indigo-400">GITHUB</span> ARCADE
+                </h1>
+                
+                <!-- SEARCH & SORT TOOLBAR -->
+                <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <!-- Search -->
+                    <div class="relative">
+                        <i class="fas fa-search absolute left-3 top-2.5 text-gray-400"></i>
+                        <input type="text" id="searchInput" placeholder="Search games..." 
+                            class="bg-gray-700 text-white pl-10 pr-4 py-2 rounded border border-gray-600 focus:outline-none focus:border-indigo-500 font-retro text-lg w-full">
+                    </div>
+
+                    <!-- Sort -->
+                    <div class="relative">
+                        <select id="sortSelect" class="bg-gray-700 text-white pl-4 pr-8 py-2 rounded border border-gray-600 focus:outline-none focus:border-indigo-500 font-retro text-lg appearance-none w-full cursor-pointer">
+                            <option value="popularity">🔥 Most Popular</option>
+                            <option value="az">A-Z Title</option>
+                            <option value="za">Z-A Title</option>
+                            <option value="scratch">Type: Scratch</option>
+                            <option value="flash">Type: Flash</option>
+                        </select>
+                        <i class="fas fa-chevron-down absolute right-3 top-3 text-gray-400 pointer-events-none"></i>
+                    </div>
+                </div>
+
+                <div class="font-retro text-xl text-gray-400 hidden lg:block">
+                    BOSS MODE: <span class="text-white border border-gray-500 px-2 rounded">ESC</span>
+                </div>
             </div>
         </nav>
 
         <!-- Dynamic Game Grid -->
-        <main class="flex-1 p-8 max-w-7xl mx-auto w-full">
+        <main class="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
+            <!-- Stats Bar -->
+            <div class="flex justify-between items-end mb-6 border-b border-gray-700 pb-2">
+                <span id="gameCount" class="font-retro text-xl text-gray-400">Loading library...</span>
+                <span class="text-xs text-gray-500 font-mono">v2.1.0</span>
+            </div>
+
             <div id="game-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 <!-- Javascript will inject games here -->
                 <div class="col-span-full text-center py-20 text-gray-500 font-pixel text-xs animate-pulse">
                     LOADING CARTRIDGES...
                 </div>
+            </div>
+            
+            <div id="no-results" class="hidden col-span-full text-center py-20">
+                <p class="font-pixel text-red-400 mb-2">NO GAMES FOUND</p>
+                <button onclick="resetSearch()" class="text-indigo-400 underline font-retro text-xl">Clear Search</button>
             </div>
         </main>
     </div>
@@ -76,17 +118,19 @@
     <!-- =========================== -->
     <!-- 2. PLAYING MODAL (Overlay)  -->
     <!-- =========================== -->
-    <div id="play-modal" class="fixed inset-0 bg-black/95 z-50 hidden flex flex-col items-center justify-center">
-        <div class="w-full max-w-5xl flex justify-end px-4 mb-2">
+    <div id="play-modal" class="fixed inset-0 bg-black/95 z-50 hidden flex flex-col items-center justify-center backdrop-blur-sm">
+        <div class="w-full max-w-5xl flex justify-between items-center px-4 mb-2">
+            <h2 id="modal-title" class="text-white font-retro text-2xl">Game Title</h2>
             <button onclick="closeGame()" class="text-white font-pixel text-xs border border-red-500 hover:bg-red-600 px-4 py-2 rounded transition">
-                CLOSE GAME [X]
+                CLOSE [X]
             </button>
         </div>
         
         <!-- Game Container -->
-        <div id="player-container" class="w-full max-w-5xl h-[80vh] bg-black border-2 border-gray-700 shadow-2xl flex items-center justify-center">
+        <div id="player-container" class="w-full max-w-5xl h-[80vh] bg-black border-2 border-gray-700 shadow-2xl flex items-center justify-center overflow-hidden relative">
             <!-- Game loads here -->
         </div>
+        <p class="text-gray-500 mt-2 font-mono text-xs">Press ESC to close game instantly.</p>
     </div>
 
     <!-- =========================== -->
@@ -126,113 +170,230 @@
                     Preliminary data suggests that the integration of the new logistical framework has yielded a net positive 
                     ROI of 4.2%, although friction points remain in the supply chain vertical.
                 </p>
-                <p class="mb-4 text-justify leading-7">
-                    It is imperative that we continue to monitor the KPIs established in the Q2 summit. 
-                    <span class="text-blue-600 underline">See Appendix A</span> for the full breakdown of data sets. 
-                    The operational expenditure (OPEX) has remained within the standard deviation of the allocated budget.
-                </p>
             </div>
         </div>
     </div>
 
     <script>
-        // --- 1. LOAD GAMES FROM JSON ---
+        // --- GLOBAL STATE ---
+        let allGames = [];
+        let filteredGames = [];
+        
+        // --- BACKUP DATA (Used if games.json fails) ---
+        const backupGames = [
+            { "title": "Appel", "type": "scratch", "id": "60917032", "description": "Classic platformer by Griffpatch." },
+            { "title": "Fancy Pants Adv.", "type": "flash", "file": "fancy_pants.swf", "description": "Run fast, wear fancy pants." }
+        ];
+
+        // --- 1. INITIALIZATION ---
         async function loadGames() {
             try {
-                // Fetch the list of games from games.json
                 const response = await fetch('games.json');
-                const games = await response.json();
-                
-                const container = document.getElementById('game-container');
-                container.innerHTML = ''; // Clear loading text
-
-                games.forEach(game => {
-                    // Create Card HTML
-                    const card = document.createElement('div');
-                    card.className = "game-card bg-gray-800 border-2 border-gray-700 rounded-lg overflow-hidden cursor-pointer flex flex-col";
-                    
-                    // Determine Thumbnail (Use a placeholder if none provided)
-                    const thumb = game.thumbnail || `https://placehold.co/400x300/2a2a2a/FFF?text=${game.title.charAt(0)}`;
-
-                    card.innerHTML = `
-                        <div class="h-40 bg-gray-900 overflow-hidden relative">
-                            <img src="${thumb}" alt="${game.title}" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition">
-                            <span class="absolute top-2 right-2 px-2 py-1 text-[10px] font-pixel text-black ${game.type === 'flash' ? 'bg-orange-400' : 'bg-blue-400'}">
-                                ${game.type.toUpperCase()}
-                            </span>
-                        </div>
-                        <div class="p-4 flex-1 flex flex-col justify-between">
-                            <h3 class="text-white font-bold font-retro text-xl tracking-wide mb-1">${game.title}</h3>
-                            <p class="text-gray-400 text-xs truncate">${game.description || 'Classic Game'}</p>
-                        </div>
-                    `;
-
-                    // Add Click Event
-                    card.onclick = () => launchGame(game);
-                    container.appendChild(card);
-                });
-
+                if (!response.ok) throw new Error("File not found");
+                allGames = await response.json();
             } catch (error) {
-                console.error("Error loading games:", error);
-                document.getElementById('game-container').innerHTML = `
-                    <div class="col-span-full text-center text-red-500 font-pixel">
-                        ERROR LOADING GAMES.JSON<br>Check console.
-                    </div>`;
+                console.warn("Using backup data (Preview Mode)");
+                allGames = backupGames;
             }
+
+            // ENRICH DATA: Add simulated popularity & Unique IDs
+            const userLikes = JSON.parse(localStorage.getItem('arcadeLikes')) || {};
+
+            allGames = allGames.map((game, index) => {
+                // Create a unique key for the game (ID or Filename)
+                const uniqueId = game.id || game.file;
+                
+                // Simulate a "Base Popularity" (Random number between 500 and 5000)
+                // We use the ID to seed it so it stays consistent-ish, or just random for now
+                const baseLikes = Math.floor(Math.random() * 4500) + 500;
+                
+                // Check if user liked it locally
+                const isLiked = userLikes[uniqueId] ? true : false;
+
+                return {
+                    ...game,
+                    uniqueId: uniqueId,
+                    likes: baseLikes + (isLiked ? 1 : 0),
+                    isLiked: isLiked
+                };
+            });
+
+            // Initial Filter & Render
+            applyFilters();
+            
+            // Setup Event Listeners
+            document.getElementById('searchInput').addEventListener('input', applyFilters);
+            document.getElementById('sortSelect').addEventListener('change', applyFilters);
         }
 
-        // --- 2. GAME LAUNCHER ---
-        function launchGame(game) {
+        // --- 2. CORE LOGIC: FILTER & SORT ---
+        function applyFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const sortType = document.getElementById('sortSelect').value;
+
+            // 1. Filter by Search
+            filteredGames = allGames.filter(game => {
+                return game.title.toLowerCase().includes(query) || 
+                       (game.description && game.description.toLowerCase().includes(query));
+            });
+
+            // 2. Sort
+            if (sortType === 'az') {
+                filteredGames.sort((a, b) => a.title.localeCompare(b.title));
+            } else if (sortType === 'za') {
+                filteredGames.sort((a, b) => b.title.localeCompare(a.title));
+            } else if (sortType === 'popularity') {
+                // Sort by likes (descending), then user favorites push to top
+                filteredGames.sort((a, b) => {
+                    if (a.isLiked && !b.isLiked) return -1;
+                    if (!a.isLiked && b.isLiked) return 1;
+                    return b.likes - a.likes;
+                });
+            } else if (sortType === 'scratch') {
+                filteredGames = filteredGames.filter(g => g.type === 'scratch');
+            } else if (sortType === 'flash') {
+                filteredGames = filteredGames.filter(g => g.type === 'flash');
+            }
+
+            // 3. Render
+            renderGames();
+        }
+
+        function renderGames() {
+            const container = document.getElementById('game-container');
+            const noResults = document.getElementById('no-results');
+            const countSpan = document.getElementById('gameCount');
+            
+            container.innerHTML = '';
+            countSpan.innerText = `${filteredGames.length} GAMES LOADED`;
+
+            if (filteredGames.length === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+            }
+
+            filteredGames.forEach(game => {
+                const card = document.createElement('div');
+                card.className = "game-card bg-gray-800 border-2 border-gray-700 rounded-lg overflow-hidden flex flex-col relative group";
+                
+                const thumb = game.thumbnail || `https://placehold.co/400x300/2a2a2a/FFF?text=${game.title.charAt(0)}`;
+
+                card.innerHTML = `
+                    <div class="h-40 bg-gray-900 overflow-hidden relative cursor-pointer" onclick="launchGame('${game.uniqueId}')">
+                        <img src="${thumb}" alt="${game.title}" class="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition">
+                        
+                        <span class="absolute top-2 right-2 px-2 py-1 text-[10px] font-pixel text-black font-bold z-10 
+                            ${game.type === 'flash' ? 'bg-orange-400' : 'bg-blue-400'}">
+                            ${game.type.toUpperCase()}
+                        </span>
+                        
+                        <!-- Play Overlay -->
+                        <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                            <i class="fas fa-play text-white text-3xl drop-shadow-lg"></i>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-white font-bold font-retro text-xl tracking-wide mb-1 leading-none">${game.title}</h3>
+                            <p class="text-gray-400 text-xs truncate mb-3">${game.description || 'Classic Arcade Game'}</p>
+                        </div>
+                        
+                        <div class="flex justify-between items-center border-t border-gray-700 pt-2">
+                            <span class="text-xs text-gray-500 font-mono">ID: ${game.uniqueId.toString().substring(0,6)}</span>
+                            
+                            <button onclick="toggleLike('${game.uniqueId}')" class="heart-btn flex items-center gap-1 text-gray-400 hover:text-white transition ${game.isLiked ? 'liked' : ''}">
+                                <i class="${game.isLiked ? 'fas' : 'far'} fa-heart"></i>
+                                <span class="font-retro text-lg">${formatNumber(game.likes)}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- 3. INTERACTION: LIKES & RATING ---
+        function toggleLike(id) {
+            const gameIndex = allGames.findIndex(g => g.uniqueId == id);
+            if (gameIndex === -1) return;
+
+            const game = allGames[gameIndex];
+            game.isLiked = !game.isLiked;
+            game.likes += game.isLiked ? 1 : -1;
+
+            // Save to LocalStorage
+            const userLikes = JSON.parse(localStorage.getItem('arcadeLikes')) || {};
+            if (game.isLiked) {
+                userLikes[id] = true;
+            } else {
+                delete userLikes[id];
+            }
+            localStorage.setItem('arcadeLikes', JSON.stringify(userLikes));
+
+            // Re-render to show updated state
+            applyFilters(); 
+        }
+
+        function formatNumber(num) {
+            return num >= 1000 ? (num/1000).toFixed(1) + 'k' : num;
+        }
+
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('sortSelect').value = 'popularity';
+            applyFilters();
+        }
+
+        // --- 4. GAME PLAYING LOGIC ---
+        function launchGame(uniqueId) {
+            const game = allGames.find(g => g.uniqueId == uniqueId);
+            if (!game) return;
+
             const modal = document.getElementById('play-modal');
             const container = document.getElementById('player-container');
-            container.innerHTML = ''; // Clear previous game
-
+            document.getElementById('modal-title').innerText = game.title;
+            
+            container.innerHTML = ''; 
             modal.classList.remove('hidden');
 
             if (game.type === 'scratch') {
-                // EMBED SCRATCH (Iframe)
                 container.innerHTML = `
                     <iframe src="https://scratch.mit.edu/projects/${game.id}/embed" 
                     allowtransparency="true" width="100%" height="100%" 
                     frameborder="0" scrolling="no" allowfullscreen></iframe>
                 `;
             } else if (game.type === 'flash') {
-                // EMBED FLASH (Ruffle)
                 const player = document.createElement("ruffle-player");
                 player.style.width = "100%";
                 player.style.height = "100%";
                 container.appendChild(player);
-                
-                // Load the SWF file from the swf folder
-                player.load({
-                    url: "swf/" + game.file, 
-                    backgroundColor: "#000000"
-                });
+                player.load({ url: "swf/" + game.file, backgroundColor: "#000000" });
             }
         }
 
         function closeGame() {
-            const modal = document.getElementById('play-modal');
-            const container = document.getElementById('player-container');
-            modal.classList.add('hidden');
-            container.innerHTML = ''; // Destroy game instance to stop audio
+            document.getElementById('play-modal').classList.add('hidden');
+            document.getElementById('player-container').innerHTML = '';
         }
 
-        // --- 3. BOSS MODE TOGGLE ---
+        // --- 5. BOSS MODE & UTILS ---
         document.addEventListener('keydown', (e) => {
             if (e.key === "Escape") {
-                document.body.classList.toggle('boss-active');
-                
-                // Update title for realism
-                if (document.body.classList.contains('boss-active')) {
-                    document.title = "Q3_Financial_Projections.docx - Word";
+                const modal = document.getElementById('play-modal');
+                if (!modal.classList.contains('hidden')) {
+                    closeGame();
                 } else {
-                    document.title = "Arcade Archive";
+                    document.body.classList.toggle('boss-active');
+                    document.title = document.body.classList.contains('boss-active') 
+                        ? "Q3_Financial_Projections.docx - Word" 
+                        : "Arcade Archive";
                 }
             }
         });
 
-        // Initialize
+        // Start
         loadGames();
 
     </script>
