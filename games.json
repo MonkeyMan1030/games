@@ -21,32 +21,11 @@
     "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/10128407_480x360.png"
   },
   {
-    "title": "Slither.io",
-    "type": "scratch",
-    "id": "115682859",
-    "description": "Massive multiplayer snake game by Griffpatch.",
-    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/115682859_480x360.png"
-  },
-  {
     "title": "Getting Over It",
     "type": "scratch",
     "id": "389464290",
     "description": "Frustration simulator by Griffpatch.",
     "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/389464290_480x360.png"
-  },
-  {
-    "title": "Terraria",
-    "type": "scratch",
-    "id": "322341152",
-    "description": "2D Sandbox adventure by Griffpatch.",
-    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/322341152_480x360.png"
-  },
-  {
-    "title": "Ninja",
-    "type": "scratch",
-    "id": "54486799",
-    "description": "Swift ninja action by Will_Wam.",
-    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/54486799_480x360.png"
   },
   {
     "title": "Arena v3.02",
@@ -124,6 +103,27 @@
     "id": "327244246",
     "description": "RPG Adventure by xamuil2.",
     "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/327244246_480x360.png"
+  },
+  {
+    "title": "Slither.io",
+    "type": "scratch",
+    "id": "115682859",
+    "description": "Massive multiplayer snake game by Griffpatch.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/115682859_480x360.png"
+  },
+  {
+    "title": "Terraria",
+    "type": "scratch",
+    "id": "322341152",
+    "description": "2D Sandbox adventure by Griffpatch.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/322341152_480x360.png"
+  },
+  {
+    "title": "Ninja",
+    "type": "scratch",
+    "id": "54486799",
+    "description": "Swift ninja action by Will_Wam.",
+    "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/54486799_480x360.png"
   },
   {
     "title": "Epic Ninja",
@@ -334,5 +334,19 @@
     "id": "13695277",
     "description": "Strategy battle.",
     "thumbnail": "https://cdn2.scratch.mit.edu/get_image/project/13695277_480x360.png"
+  },
+  {
+    "title": "Fancy Pants Adv.",
+    "type": "flash",
+    "file": "fancy_pants.swf",
+    "description": "Run fast, wear fancy pants. A classic platformer.",
+    "thumbnail": "https://upload.wikimedia.org/wikipedia/en/8/87/Fancy_Pants_Adventures_World_1.png"
+  },
+  {
+    "title": "Alien Hominid",
+    "type": "flash",
+    "file": "alien.swf",
+    "description": "Blast everything in sight.",
+    "thumbnail": ""
   }
 ]
